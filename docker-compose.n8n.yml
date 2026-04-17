@@ -1,0 +1,29 @@
+# n8n для интеграции с RAG Assistant API
+# Запуск: docker compose -f docker-compose.n8n.yml up -d
+# RAG API должен быть уже запущен на хосте (см. N8N_INTEGRATION.md).
+
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n-rag
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Europe/Moscow
+      # URL RAG API: с хоста из Docker — host.docker.internal (Windows/Mac)
+      # На Linux при необходимости: 172.17.0.1 или --add-host=host.docker.internal:host-gateway
+      - RAG_API_URL=http://host.docker.internal:8000
+    volumes:
+      - n8n_rag_data:/home/node/.n8n
+    # На Linux, если host.docker.internal недоступен, раскомментируйте:
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+
+volumes:
+  n8n_rag_data:

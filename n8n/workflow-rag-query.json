@@ -1,0 +1,80 @@
+{
+  "name": "RAG Assistant - Query",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rag-query",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-rag",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "rag-query-webhook"
+    },
+    {
+      "parameters": {
+        "functionCode": "const inputItem = $input.item;\nconst body = inputItem?.json?.body || inputItem?.json || {};\nconst q = body.query || body.question || body.q;\n\nif (!q || typeof q !== 'string') {\n  throw new Error('Поле query (или question, q) обязательно. Пример: {\"query\": \"Что такое RAG?\"}');\n}\n\nreturn [{ json: { query: String(q).trim() } }];"
+      },
+      "id": "parse-query",
+      "name": "Parse Query",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.RAG_API_URL || 'http://localhost:8000' }}/query",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"query\": $json.query } }}",
+        "options": {}
+      },
+      "id": "http-rag-query",
+      "name": "RAG API: Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $input.item.json }}",
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Parse Query", "type": "main", "index": 0 }]]
+    },
+    "Parse Query": {
+      "main": [[{ "node": "RAG API: Query", "type": "main", "index": 0 }]]
+    },
+    "RAG API: Query": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    }
+  },
+  "pinData": {},
+  "settings": { "executionOrder": "v1" },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-01T00:00:00.000Z",
+  "versionId": "1"
+}
