@@ -12,7 +12,7 @@
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11.9-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.12.0-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991.svg)
 ![GigaChat](https://img.shields.io/badge/GigaChat-Sber-orange.svg)
@@ -169,7 +169,7 @@ python-dotenv         # 1.2.1  - Environment management
 
 ### Prerequisites
 
-- **Python 3.11+** (tested on 3.11.9)
+- **Python 3.12+** (tested on 3.12.0)
 - **Git**
 - **OpenAI API Key** (for assistant_api)
 - **GigaChat Credentials** (for assistant_giga)
@@ -182,13 +182,13 @@ git clone https://github.com/yourusername/rag-assistant.git
 cd rag-assistant
 
 # Create virtual environment
-py -3.11 -m venv venv_py311
+py -3.12 -m venv venv_py312
 
 # Activate (Windows PowerShell)
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 
 # Activate (Windows CMD)
-.\venv_py311\Scripts\activate.bat
+.\venv_py312\Scripts\activate.bat
 
 # Activate (Linux/Mac)
 source venv_py311/bin/activate
@@ -248,7 +248,7 @@ GIGACHAT_RQUID=your-request-uid-here
 
 ```bash
 # Activate environment
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 
 # Navigate to OpenAI assistant
 cd assistant_api
@@ -261,7 +261,7 @@ python app.py
 
 ```bash
 # Activate environment
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 
 # Navigate to GigaChat assistant
 cd assistant_giga
@@ -409,7 +409,7 @@ The included knowledge base covers:
 #### "ModuleNotFoundError"
 **Solution:** Activate virtual environment:
 ```bash
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 ```
 
 #### GigaChat "402 Payment Required"
