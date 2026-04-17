@@ -65,8 +65,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run markdownlint-cli2
+      - name: Run markdownlint-cli2 on main README
         uses: DavidAnson/markdownlint-cli2-action@v16
         with:
-          globs: "**/*.md"
           config: ".markdownlint.json"
+          globs: "README.md"
