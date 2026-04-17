@@ -8,10 +8,12 @@
 - **Пример кейса:** сотрудник задаёт вопрос по процедуре → ассистент возвращает ответ + выдержки из актуального документа.
 
 ---
+
 # 🤖 RAG Assistant - Dual Implementation
 
 <div align="center">
 
+[![CI](https://github.com/Edwards359/rag-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/Edwards359/rag-assistant/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/Python-3.12.0-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991.svg)
