@@ -12,7 +12,7 @@
 
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.11.9-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.12.0-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991.svg)
 ![GigaChat](https://img.shields.io/badge/GigaChat-Sber-orange.svg)
@@ -50,17 +50,20 @@
 This project demonstrates two complete RAG (Retrieval-Augmented Generation) implementations using different Large Language Model backends:
 
 ### 🔵 OpenAI Implementation (`assistant_api`)
+
 - **LLM:** GPT-4o-mini
 - **Embeddings:** text-embedding-3-small
 - **Quality Evaluation:** RAGAS metrics
 - **Status:** ✅ Fully functional
 
 ### 🟢 GigaChat Implementation (`assistant_giga`)
+
 - **LLM:** GigaChat by Sber
 - **Embeddings:** GigaChat Embeddings API (with fallback)
 - **Status:** ✅ Functional with limitations
 
 Both implementations share:
+
 - **Vector Database:** ChromaDB
 - **Caching:** SQLite
 - **Smart Chunking:** Semantic text splitting with overlap
@@ -70,7 +73,7 @@ Both implementations share:
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌─────────────┐
 │ User Query  │
 └──────┬──────┘
@@ -137,6 +140,7 @@ Both implementations share:
 - **Automatic Retry** - OAuth token refresh for GigaChat
 - **Fallback Embeddings** - Hash-based vectors when API unavailable
 - **Detailed Logging** - Track every step of the pipeline
+- **n8n Integration** - HTTP API (`POST /query`) and ready-made n8n workflow for automation
 
 ---
 
@@ -145,7 +149,7 @@ Both implementations share:
 ### Core Technologies
 
 | Technology | Version | Purpose |
-|------------|---------|---------|
+| ---------- | ------- | ------- |
 | **Python** | 3.11.9 | Runtime environment |
 | **OpenAI API** | 2.15.0 | LLM & Embeddings (assistant_api) |
 | **GigaChat API** | - | Russian LLM (assistant_giga) |
@@ -169,7 +173,7 @@ python-dotenv         # 1.2.1  - Environment management
 
 ### Prerequisites
 
-- **Python 3.11+** (tested on 3.11.9)
+- **Python 3.12+** (tested on 3.12.0)
 - **Git**
 - **OpenAI API Key** (for assistant_api)
 - **GigaChat Credentials** (for assistant_giga)
@@ -231,12 +235,14 @@ GIGACHAT_RQUID=your-request-uid-here
 ### Getting API Keys
 
 #### OpenAI
-1. Visit https://platform.openai.com/api-keys
+
+1. Visit <https://platform.openai.com/api-keys>
 2. Create a new API key
 3. Copy and paste into `.env`
 
 #### GigaChat
-1. Register at https://developers.sber.ru/gigachat
+
+1. Register at <https://developers.sber.ru/gigachat>
 2. Get your OAuth credentials
 3. Copy AUTH_KEY and RQUID into `.env`
 
@@ -277,19 +283,36 @@ cd assistant_api
 python evaluate_ragas.py
 ```
 
+### HTTP API and n8n
+
+RAG Assistant (OpenAI) можно вызывать по HTTP и из n8n:
+
+```bash
+# Запуск API
+cd assistant_api
+python -m uvicorn api_server:app --host 0.0.0.0 --port 8000
+
+# Проверка
+curl -X POST http://localhost:8000/query -H "Content-Type: application/json" -d "{\"query\": \"Что такое RAG?\"}"
+```
+
+- Импорт workflow: `n8n/workflow-rag-query.json`
+- n8n в Docker: `docker compose -f docker-compose.n8n.yml up -d`
+- Подробно: [N8N_INTEGRATION.md](N8N_INTEGRATION.md)
+
 ### Console Commands
 
 Once running, use these commands:
 
 | Command | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `exit`, `quit`, `q` | Exit the application |
 | `stats` | Show system statistics |
 | `clear` | Clear the cache (with confirmation) |
 
 ### Example Session
 
-```
+```text
 ╔══════════════════════════════════════════════════════════╗
 ║         RAG Ассистент (API Mode)                        ║
 ║  Retrieval-Augmented Generation через OpenAI API        ║
@@ -318,7 +341,7 @@ RAG (Retrieval-Augmented Generation) - это подход, который
 
 ## 📁 Project Structure
 
-```
+```text
 rag-assistant/
 │
 ├── 📄 README.md                    # This file
@@ -330,10 +353,15 @@ rag-assistant/
 ├── 📄 .gitignore                   # Git ignore rules
 ├── 🔧 activate.ps1                 # PowerShell activation script
 ├── 🔧 activate.bat                 # CMD activation script
+├── 🐳 docker-compose.n8n.yml       # n8n for automation
+├── 📄 N8N_INTEGRATION.md           # n8n and HTTP API guide
+├── 📁 n8n/                         # n8n workflows
+│   └── workflow-rag-query.json     # RAG query webhook
 │
 ├── 🔵 assistant_api/               # OpenAI Implementation
 │   ├── 📄 OPENAI_INFO.md          # Detailed documentation
 │   ├── 🐍 app.py                  # Main console application
+│   ├── 🐍 api_server.py           # HTTP API (FastAPI) for n8n
 │   ├── 🐍 rag_pipeline.py         # RAG orchestration
 │   ├── 🐍 vector_store.py         # ChromaDB + OpenAI embeddings
 │   ├── 🐍 cache.py                # SQLite caching
@@ -359,6 +387,7 @@ rag-assistant/
 ### Main Documents
 
 - **[SETUP_COMPLETE.md](SETUP_COMPLETE.md)** - Complete installation guide
+- **[N8N_INTEGRATION.md](N8N_INTEGRATION.md)** - HTTP API and n8n workflow
 - **[OPENAI_INFO.md](assistant_api/OPENAI_INFO.md)** - OpenAI implementation details
 - **[GIGACHAT_INFO.md](assistant_giga/GIGACHAT_INFO.md)** - GigaChat implementation details
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute
@@ -366,6 +395,7 @@ rag-assistant/
 ### Knowledge Base Topics
 
 The included knowledge base covers:
+
 - Machine Learning fundamentals
 - Neural Networks and Deep Learning
 - NLP and Transformers
@@ -384,7 +414,7 @@ The included knowledge base covers:
 ### Benchmarks
 
 | Operation | Time | Cost (OpenAI) |
-|-----------|------|---------------|
+| --------- | ---- | ------------- |
 | First query | 2-5 sec | ~$0.001 |
 | Cached query | <100ms | $0 |
 | Document chunking | ~1 sec | ~$0.0006 |
@@ -404,19 +434,25 @@ The included knowledge base covers:
 ### Common Issues
 
 #### "OPENAI_API_KEY not set"
+
 **Solution:** Create `.env` file with your API key
 
 #### "ModuleNotFoundError"
+
 **Solution:** Activate virtual environment:
+
 ```bash
 .\venv_py311\Scripts\Activate.ps1
 ```
 
 #### GigaChat "402 Payment Required"
+
 **Solution:** This is normal for Embeddings API. System uses fallback.
 
 #### Slow responses
-**Solution:** 
+
+**Solution:**
+
 - Use cache (check with `stats` command)
 - Reduce `top_k` in search
 - Decrease `max_tokens` in generation
@@ -478,7 +514,7 @@ This project was built to demonstrate best practices in RAG implementation with 
 ## 📊 Project Status
 
 | Component | OpenAI | GigaChat |
-|-----------|--------|----------|
+| --------- | ------ | -------- |
 | LLM API | ✅ | ✅ |
 | Embeddings | ✅ | ⚠️ Fallback |
 | Vector Search | ✅ | ✅ |
