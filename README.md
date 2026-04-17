@@ -186,13 +186,13 @@ git clone https://github.com/yourusername/rag-assistant.git
 cd rag-assistant
 
 # Create virtual environment
-py -3.11 -m venv venv_py311
+py -3.12 -m venv venv_py312
 
 # Activate (Windows PowerShell)
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 
 # Activate (Windows CMD)
-.\venv_py311\Scripts\activate.bat
+.\venv_py312\Scripts\activate.bat
 
 # Activate (Linux/Mac)
 source venv_py311/bin/activate
@@ -254,7 +254,7 @@ GIGACHAT_RQUID=your-request-uid-here
 
 ```bash
 # Activate environment
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 
 # Navigate to OpenAI assistant
 cd assistant_api
@@ -267,7 +267,7 @@ python app.py
 
 ```bash
 # Activate environment
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 
 # Navigate to GigaChat assistant
 cd assistant_giga
@@ -442,7 +442,7 @@ The included knowledge base covers:
 **Solution:** Activate virtual environment:
 
 ```bash
-.\venv_py311\Scripts\Activate.ps1
+.\venv_py312\Scripts\Activate.ps1
 ```
 
 #### GigaChat "402 Payment Required"

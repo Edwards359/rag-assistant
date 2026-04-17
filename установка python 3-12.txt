@@ -1,0 +1,11 @@
+Установка python
+winget install Python.Python.3.12
+
+Создание виртаульного окружения 3.12
+py -3.12 -m venv venv_py312
+
+Запуск
+.\venv_py312\Scripts\activate   
+
+Установка зависимостей
+pip install -r .\requirements.txt
