@@ -9,7 +9,7 @@
 
 ---
 
-# 🤖 RAG Assistant - Dual Implementation
+# 🤖 RAG Assistant — две реализации
 
 <div align="center">
 
@@ -20,194 +20,194 @@
 ![GigaChat](https://img.shields.io/badge/GigaChat-Sber-orange.svg)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success.svg)
 
-**Two production-ready RAG (Retrieval-Augmented Generation) assistants with different LLM backends**
+**Два production-ready RAG-ассистента (Retrieval-Augmented Generation) с разными LLM-бэкендами**
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Documentation](#-documentation) • [Contributing](#-contributing)
+[Возможности](#-возможности) • [Установка](#-установка) • [Использование](#-использование) • [Документация](#-документация) • [Вклад](#-вклад-в-проект)
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 📋 Оглавление
 
-- [About](#-about-the-project)
-- [Architecture](#-architecture)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Installation](#-installation)
-- [Configuration](#-configuration)
-- [Usage](#-usage)
-- [Project Structure](#-project-structure)
-- [Documentation](#-documentation)
-- [Performance](#-performance)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Acknowledgments](#-acknowledgments)
+- [О проекте](#-о-проекте)
+- [Архитектура](#-архитектура)
+- [Возможности](#-возможности)
+- [Технологии](#-технологии)
+- [Установка](#-установка)
+- [Конфигурация](#-конфигурация)
+- [Использование](#-использование)
+- [Структура проекта](#-структура-проекта)
+- [Документация](#-документация)
+- [Производительность](#-производительность)
+- [Решение проблем](#-решение-проблем)
+- [Вклад в проект](#-вклад-в-проект)
+- [Лицензия](#-лицензия)
+- [Благодарности](#-благодарности)
 
 ---
 
-## 🎯 About The Project
+## 🎯 О проекте
 
-This project demonstrates two complete RAG (Retrieval-Augmented Generation) implementations using different Large Language Model backends:
+Проект демонстрирует две полноценные реализации RAG (Retrieval-Augmented Generation) с разными бэкендами больших языковых моделей:
 
-### 🔵 OpenAI Implementation (`assistant_api`)
+### 🔵 Реализация на OpenAI (`assistant_api`)
 
 - **LLM:** GPT-4o-mini
-- **Embeddings:** text-embedding-3-small
-- **Quality Evaluation:** RAGAS metrics
-- **Status:** ✅ Fully functional
+- **Эмбеддинги:** text-embedding-3-small
+- **Оценка качества:** метрики RAGAS
+- **Статус:** ✅ полностью работоспособна
 
-### 🟢 GigaChat Implementation (`assistant_giga`)
+### 🟢 Реализация на GigaChat (`assistant_giga`)
 
-- **LLM:** GigaChat by Sber
-- **Embeddings:** GigaChat Embeddings API (with fallback)
-- **Status:** ✅ Functional with limitations
+- **LLM:** GigaChat от Сбера
+- **Эмбеддинги:** GigaChat Embeddings API (с fallback)
+- **Статус:** ✅ работает с ограничениями
 
-Both implementations share:
+Общая инфраструктура:
 
-- **Vector Database:** ChromaDB
-- **Caching:** SQLite
-- **Smart Chunking:** Semantic text splitting with overlap
-- **Console Interface:** Interactive CLI
+- **Векторная БД:** ChromaDB
+- **Кеш:** SQLite
+- **Умный чанкинг:** семантическое разбиение текста с перекрытием
+- **Консольный интерфейс:** интерактивный CLI
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Архитектура
 
 ```text
-┌─────────────┐
-│ User Query  │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────────┐
-│  Cache Check    │ ◄─── SQLite DB
-│  (SHA-256 hash) │
-└────────┬────────┘
-         │
-    ┌────┴────┐
-    │  Hit?   │
-    └─┬────┬──┘
-  Yes │    │ No
-      │    ▼
-      │  ┌──────────────────┐
-      │  │ Vector Search    │ ◄─── ChromaDB
-      │  │ (Top-K=3)        │
-      │  └────────┬─────────┘
-      │           │
-      │           ▼
-      │  ┌──────────────────┐
-      │  │ Context Building │
-      │  │ (Prompt + Docs)  │
-      │  └────────┬─────────┘
-      │           │
-      │           ▼
-      │  ┌──────────────────┐
-      │  │ LLM Generation   │ ◄─── OpenAI / GigaChat
-      │  │ (Temperature=0.3)│
-      │  └────────┬─────────┘
-      │           │
-      │           ▼
-      │  ┌──────────────────┐
-      │  │ Cache Storage    │
-      │  └────────┬─────────┘
-      │           │
-      └───────────┘
-              │
-              ▼
-      ┌─────────────┐
-      │   Response  │
-      └─────────────┘
+┌───────────────────────┐
+│  Запрос пользователя  │
+└───────────┬───────────┘
+            │
+            ▼
+┌───────────────────────┐
+│    Проверка кеша      │ ◄─── SQLite
+│     (SHA-256 хеш)     │
+└──────────┬────────────┘
+           │
+     ┌─────┴─────┐
+     │  Попал?  │
+     └─┬──────┬──┘
+    Да │      │ Нет
+       │      ▼
+       │  ┌────────────────────┐
+       │  │  Векторный поиск   │ ◄─── ChromaDB
+       │  │     (Top-K=3)      │
+       │  └─────────┬──────────┘
+       │            │
+       │            ▼
+       │  ┌────────────────────┐
+       │  │  Сборка контекста  │
+       │  │  (промпт + доки)   │
+       │  └─────────┬──────────┘
+       │            │
+       │            ▼
+       │  ┌────────────────────┐
+       │  │   Генерация LLM    │ ◄─── OpenAI / GigaChat
+       │  │  (Temperature=0.3) │
+       │  └─────────┬──────────┘
+       │            │
+       │            ▼
+       │  ┌────────────────────┐
+       │  │    Запись в кеш    │
+       │  └─────────┬──────────┘
+       │            │
+       └────────────┘
+                │
+                ▼
+        ┌───────────────┐
+        │     Ответ     │
+        └───────────────┘
 ```
 
 ---
 
-## ✨ Features
+## ✨ Возможности
 
-### Core Functionality
+### Основной функционал
 
-- **✅ Semantic Search** - Find relevant context using vector embeddings
-- **✅ Smart Caching** - Instant responses for repeated queries (<100ms)
-- **✅ Intelligent Chunking** - Semantic text splitting with overlap
-- **✅ Dual LLM Support** - Choose between OpenAI and GigaChat
-- **✅ Quality Metrics** - RAGAS evaluation for OpenAI implementation
-- **✅ Console Interface** - User-friendly CLI with commands
-- **✅ Statistics** - Track cache hits, document counts, performance
+- **✅ Семантический поиск** — поиск релевантного контекста через векторные эмбеддинги
+- **✅ Умный кеш** — мгновенные ответы на повторные запросы (<100 мс)
+- **✅ Интеллектуальный чанкинг** — семантическое разбиение текста с перекрытием
+- **✅ Два LLM-бэкенда** — выбор между OpenAI и GigaChat
+- **✅ Метрики качества** — оценка через RAGAS для реализации на OpenAI
+- **✅ Консольный интерфейс** — удобный CLI с командами
+- **✅ Статистика** — попадания в кеш, количество документов, производительность
 
-### Advanced Features
+### Расширенные возможности
 
-- **Context Preservation** - Overlap between chunks maintains coherence
-- **Normalized Queries** - Case-insensitive, whitespace-normalized caching
-- **Automatic Retry** - OAuth token refresh for GigaChat
-- **Fallback Embeddings** - Hash-based vectors when API unavailable
-- **Detailed Logging** - Track every step of the pipeline
-- **n8n Integration** - HTTP API (`POST /query`) and ready-made n8n workflow for automation
+- **Сохранение контекста** — перекрытие чанков поддерживает связность
+- **Нормализация запросов** — кеш нечувствителен к регистру и пробелам
+- **Автоматический ретрай** — обновление OAuth-токена для GigaChat
+- **Fallback-эмбеддинги** — хеш-векторы, когда API недоступен
+- **Подробное логирование** — отслеживание всех шагов pipeline
+- **Интеграция с n8n** — HTTP API (`POST /query`) и готовый n8n workflow для автоматизации
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Технологии
 
-### Core Technologies
+### Основные
 
-| Technology | Version | Purpose |
-| ---------- | ------- | ------- |
-| **Python** | 3.11.9 | Runtime environment |
-| **OpenAI API** | 2.15.0 | LLM & Embeddings (assistant_api) |
-| **GigaChat API** | - | Russian LLM (assistant_giga) |
-| **ChromaDB** | 1.4.0 | Vector database |
-| **LangChain** | 1.2.3 | LLM framework |
-| **RAGAS** | 0.4.2 | RAG quality evaluation |
+| Технология | Версия | Назначение |
+| ---------- | ------ | ---------- |
+| **Python** | 3.12.0 | Среда выполнения |
+| **OpenAI API** | 2.15.0 | LLM и эмбеддинги (assistant_api) |
+| **GigaChat API** | — | Русскоязычный LLM (assistant_giga) |
+| **ChromaDB** | 1.4.0 | Векторная база |
+| **LangChain** | 1.2.3 | Фреймворк для LLM |
+| **RAGAS** | 0.4.2 | Оценка качества RAG |
 
-### Supporting Libraries
+### Вспомогательные библиотеки
 
 ```python
-sentence-transformers  # 5.2.0  - Transformer models
-numpy                  # 2.4.1  - Numerical operations
-pandas                 # 2.3.3  - Data manipulation
-tiktoken              # 0.12.0 - Token counting
-python-dotenv         # 1.2.1  - Environment management
+sentence-transformers  # 5.2.0  — трансформерные модели
+numpy                  # 2.4.1  — численные операции
+pandas                 # 2.3.3  — работа с данными
+tiktoken               # 0.12.0 — подсчёт токенов
+python-dotenv          # 1.2.1  — работа с переменными окружения
 ```
 
 ---
 
-## 📥 Installation
+## 📥 Установка
 
-### Prerequisites
+### Требования
 
-- **Python 3.12+** (tested on 3.12.0)
+- **Python 3.12+** (проверено на 3.12.0)
 - **Git**
-- **OpenAI API Key** (for assistant_api)
-- **GigaChat Credentials** (for assistant_giga)
+- **Ключ OpenAI API** (для `assistant_api`)
+- **Учётные данные GigaChat** (для `assistant_giga`)
 
-### Quick Start
+### Быстрый старт
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/rag-assistant.git
+# Клонировать репозиторий
+git clone https://github.com/Edwards359/rag-assistant.git
 cd rag-assistant
 
-# Create virtual environment
+# Создать виртуальное окружение
 py -3.12 -m venv venv_py312
 
-# Activate (Windows PowerShell)
+# Активировать (Windows PowerShell)
 .\venv_py312\Scripts\Activate.ps1
 
-# Activate (Windows CMD)
+# Активировать (Windows CMD)
 .\venv_py312\Scripts\activate.bat
 
-# Activate (Linux/Mac)
-source venv_py311/bin/activate
+# Активировать (Linux/Mac)
+source venv_py312/bin/activate
 
-# Install dependencies
+# Установить зависимости
 pip install -r requirements.txt
 
-# Setup environment variables
+# Настроить переменные окружения
 copy env.example .env
-# Edit .env with your API keys
+# Отредактируйте .env — добавьте свои API-ключи
 ```
 
-### Alternative: Using Activation Scripts
+### Альтернатива: через скрипты активации
 
 ```bash
 # Windows PowerShell
@@ -219,73 +219,73 @@ activate.bat
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ Конфигурация
 
-### Environment Variables
+### Переменные окружения
 
-Create a `.env` file in the project root:
+Создайте файл `.env` в корне проекта:
 
 ```env
-# OpenAI Configuration (required for assistant_api)
+# Настройки OpenAI (обязательно для assistant_api)
 OPENAI_API_KEY=sk-your-openai-api-key-here
 
-# GigaChat Configuration (required for assistant_giga)
+# Настройки GigaChat (обязательно для assistant_giga)
 GIGACHAT_AUTH_KEY=your-basic-auth-token-here
 GIGACHAT_RQUID=your-request-uid-here
 ```
 
-### Getting API Keys
+### Получение API-ключей
 
 #### OpenAI
 
-1. Visit <https://platform.openai.com/api-keys>
-2. Create a new API key
-3. Copy and paste into `.env`
+1. Откройте <https://platform.openai.com/api-keys>
+2. Создайте новый API-ключ
+3. Скопируйте и вставьте в `.env`
 
 #### GigaChat
 
-1. Register at <https://developers.sber.ru/gigachat>
-2. Get your OAuth credentials
-3. Copy AUTH_KEY and RQUID into `.env`
+1. Зарегистрируйтесь на <https://developers.sber.ru/gigachat>
+2. Получите OAuth-учётку
+3. Скопируйте `AUTH_KEY` и `RQUID` в `.env`
 
 ---
 
-## 🚀 Usage
+## 🚀 Использование
 
-### OpenAI Assistant
+### Ассистент на OpenAI
 
 ```bash
-# Activate environment
+# Активировать окружение
 .\venv_py312\Scripts\Activate.ps1
 
-# Navigate to OpenAI assistant
+# Перейти к OpenAI-ассистенту
 cd assistant_api
 
-# Run
+# Запуск
 python app.py
 ```
 
-### GigaChat Assistant
+### Ассистент на GigaChat
 
 ```bash
-# Activate environment
+# Активировать окружение
 .\venv_py312\Scripts\Activate.ps1
 
-# Navigate to GigaChat assistant
+# Перейти к GigaChat-ассистенту
 cd assistant_giga
 
-# Run
+# Запуск
 python app.py
 ```
 
-### Quality Evaluation (OpenAI only)
+### Оценка качества (только OpenAI)
 
 ```bash
 cd assistant_api
 python evaluate_ragas.py
 ```
 
-### HTTP API and n8n
+### HTTP API и n8n
 
 RAG Assistant (OpenAI) можно вызывать по HTTP и из n8n:
 
@@ -302,17 +302,17 @@ curl -X POST http://localhost:8000/query -H "Content-Type: application/json" -d 
 - n8n в Docker: `docker compose -f docker-compose.n8n.yml up -d`
 - Подробно: [N8N_INTEGRATION.md](N8N_INTEGRATION.md)
 
-### Console Commands
+### Команды в консоли
 
-Once running, use these commands:
+После запуска доступны команды:
 
-| Command | Description |
-| ------- | ----------- |
-| `exit`, `quit`, `q` | Exit the application |
-| `stats` | Show system statistics |
-| `clear` | Clear the cache (with confirmation) |
+| Команда | Описание |
+| ------- | -------- |
+| `exit`, `quit`, `q` | Выйти из приложения |
+| `stats` | Показать статистику |
+| `clear` | Очистить кеш (с подтверждением) |
 
-### Example Session
+### Пример сессии
 
 ```text
 ╔══════════════════════════════════════════════════════════╗
@@ -329,228 +329,228 @@ Once running, use these commands:
    Использовано документов: 3
 
 💬 Ответ:
-RAG (Retrieval-Augmented Generation) - это подход, который 
-комбинирует извлечение информации из базы знаний с генерацией 
-текста языковыми моделями. RAG системы сначала находят релевантные 
+RAG (Retrieval-Augmented Generation) — это подход, который
+комбинирует извлечение информации из базы знаний с генерацией
+текста языковыми моделями. RAG-системы сначала находят релевантные
 документы, затем используют их как контекст для генерации ответа...
 
 📚 Использованный контекст:
-   1. RAG (Retrieval-Augmented Generation) - это подход...
+   1. RAG (Retrieval-Augmented Generation) — это подход...
 ────────────────────────────────────────────────────────────
 ```
 
 ---
 
-## 📁 Project Structure
+## 📁 Структура проекта
 
 ```text
 rag-assistant/
 │
-├── 📄 README.md                    # This file
-├── 📄 LICENSE                      # MIT License
-├── 📄 CONTRIBUTING.md              # Contribution guidelines
-├── 📄 SETUP_COMPLETE.md            # Installation log
-├── 📄 requirements.txt             # Python dependencies
-├── 📄 env.example                  # Environment template
-├── 📄 .gitignore                   # Git ignore rules
-├── 🔧 activate.ps1                 # PowerShell activation script
-├── 🔧 activate.bat                 # CMD activation script
-├── 🐳 docker-compose.n8n.yml       # n8n for automation
-├── 📄 N8N_INTEGRATION.md           # n8n and HTTP API guide
-├── 📁 n8n/                         # n8n workflows
-│   └── workflow-rag-query.json     # RAG query webhook
+├── 📄 README.md                    # этот файл
+├── 📄 LICENSE                      # лицензия MIT
+├── 📄 CONTRIBUTING.md              # как внести вклад
+├── 📄 SETUP_COMPLETE.md            # лог установки
+├── 📄 requirements.txt             # Python-зависимости
+├── 📄 env.example                  # шаблон переменных окружения
+├── 📄 .gitignore                   # правила git-ignore
+├── 🔧 activate.ps1                 # скрипт активации (PowerShell)
+├── 🔧 activate.bat                 # скрипт активации (CMD)
+├── 🐳 docker-compose.n8n.yml       # n8n для автоматизации
+├── 📄 N8N_INTEGRATION.md           # n8n и HTTP API
+├── 📁 n8n/                         # n8n workflow'ы
+│   └── workflow-rag-query.json     # webhook для RAG-запросов
 │
-├── 🔵 assistant_api/               # OpenAI Implementation
-│   ├── 📄 OPENAI_INFO.md          # Detailed documentation
-│   ├── 🐍 app.py                  # Main console application
-│   ├── 🐍 api_server.py           # HTTP API (FastAPI) for n8n
-│   ├── 🐍 rag_pipeline.py         # RAG orchestration
-│   ├── 🐍 vector_store.py         # ChromaDB + OpenAI embeddings
-│   ├── 🐍 cache.py                # SQLite caching
-│   ├── 🐍 evaluate_ragas.py       # Quality evaluation
+├── 🔵 assistant_api/               # реализация на OpenAI
+│   ├── 📄 OPENAI_INFO.md           # подробная документация
+│   ├── 🐍 app.py                   # главное консольное приложение
+│   ├── 🐍 api_server.py            # HTTP API (FastAPI) для n8n
+│   ├── 🐍 rag_pipeline.py          # оркестрация RAG
+│   ├── 🐍 vector_store.py          # ChromaDB + OpenAI эмбеддинги
+│   ├── 🐍 cache.py                 # SQLite-кеш
+│   ├── 🐍 evaluate_ragas.py        # оценка качества
 │   └── 📁 data/
-│       └── 📄 docs.txt            # Knowledge base
+│       └── 📄 docs.txt             # база знаний
 │
-└── 🟢 assistant_giga/              # GigaChat Implementation
-    ├── 📄 GIGACHAT_INFO.md        # Detailed documentation
-    ├── 🐍 app.py                  # Main console application
-    ├── 🐍 rag_pipeline.py         # RAG orchestration
-    ├── 🐍 vector_store.py         # ChromaDB + GigaChat embeddings
-    ├── 🐍 cache.py                # SQLite caching
-    ├── 🐍 gigachat_client.py      # GigaChat API client
+└── 🟢 assistant_giga/              # реализация на GigaChat
+    ├── 📄 GIGACHAT_INFO.md         # подробная документация
+    ├── 🐍 app.py                   # главное консольное приложение
+    ├── 🐍 rag_pipeline.py          # оркестрация RAG
+    ├── 🐍 vector_store.py          # ChromaDB + GigaChat эмбеддинги
+    ├── 🐍 cache.py                 # SQLite-кеш
+    ├── 🐍 gigachat_client.py       # клиент GigaChat API
     └── 📁 data/
-        └── 📄 docs.txt            # Knowledge base
+        └── 📄 docs.txt             # база знаний
 ```
 
 ---
 
-## 📚 Documentation
+## 📚 Документация
 
-### Main Documents
+### Основные документы
 
-- **[SETUP_COMPLETE.md](SETUP_COMPLETE.md)** - Complete installation guide
-- **[N8N_INTEGRATION.md](N8N_INTEGRATION.md)** - HTTP API and n8n workflow
-- **[OPENAI_INFO.md](assistant_api/OPENAI_INFO.md)** - OpenAI implementation details
-- **[GIGACHAT_INFO.md](assistant_giga/GIGACHAT_INFO.md)** - GigaChat implementation details
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute
+- **[SETUP_COMPLETE.md](SETUP_COMPLETE.md)** — полный гайд по установке
+- **[N8N_INTEGRATION.md](N8N_INTEGRATION.md)** — HTTP API и n8n workflow
+- **[OPENAI_INFO.md](assistant_api/OPENAI_INFO.md)** — детали реализации на OpenAI
+- **[GIGACHAT_INFO.md](assistant_giga/GIGACHAT_INFO.md)** — детали реализации на GigaChat
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — как внести вклад
 
-### Knowledge Base Topics
+### Темы в базе знаний
 
-The included knowledge base covers:
+Встроенная база знаний охватывает:
 
-- Machine Learning fundamentals
-- Neural Networks and Deep Learning
-- NLP and Transformers
+- Основы машинного обучения
+- Нейросети и глубокое обучение
+- NLP и трансформеры
 - Word Embeddings
-- RAG Systems
-- Vector Databases
+- RAG-системы
+- Векторные базы данных
 - Prompt Engineering
 - Fine-tuning
-- LLM Quality Metrics
-- AI Caching strategies
+- Метрики качества LLM
+- Стратегии кеширования в AI
 
 ---
 
-## ⚡ Performance
+## ⚡ Производительность
 
-### Benchmarks
+### Замеры
 
-| Operation | Time | Cost (OpenAI) |
-| --------- | ---- | ------------- |
-| First query | 2-5 sec | ~$0.001 |
-| Cached query | <100ms | $0 |
-| Document chunking | ~1 sec | ~$0.0006 |
-| Single embedding | ~0.5 sec | ~$0.00001 |
+| Операция | Время | Стоимость (OpenAI) |
+| -------- | ----- | ------------------ |
+| Первый запрос | 2–5 сек | ~$0.001 |
+| Из кеша | <100 мс | $0 |
+| Чанкинг документов | ~1 сек | ~$0.0006 |
+| Один эмбеддинг | ~0.5 сек | ~$0.00001 |
 
-### Optimization Tips
+### Советы по оптимизации
 
-1. **Use Cache** - Repeated queries are instant
-2. **Optimize Chunks** - Balance size vs. relevance
-3. **Limit max_tokens** - 500 is sufficient for most answers
-4. **Use gpt-4o-mini** - 60x cheaper than GPT-4
+1. **Используйте кеш** — повторные запросы мгновенные
+2. **Оптимизируйте чанки** — баланс размера и релевантности
+3. **Ограничьте `max_tokens`** — 500 достаточно для большинства ответов
+4. **Используйте `gpt-4o-mini`** — в 60 раз дешевле GPT-4
 
 ---
 
-## 🐛 Troubleshooting
+## 🐛 Решение проблем
 
-### Common Issues
+### Частые вопросы
 
-#### "OPENAI_API_KEY not set"
+#### «OPENAI_API_KEY not set»
 
-**Solution:** Create `.env` file with your API key
+**Решение:** создайте файл `.env` со своим API-ключом.
 
-#### "ModuleNotFoundError"
+#### «ModuleNotFoundError»
 
-**Solution:** Activate virtual environment:
+**Решение:** активируйте виртуальное окружение:
 
 ```bash
 .\venv_py312\Scripts\Activate.ps1
 ```
 
-#### GigaChat "402 Payment Required"
+#### GigaChat «402 Payment Required»
 
-**Solution:** This is normal for Embeddings API. System uses fallback.
+**Решение:** это ожидаемое поведение для Embeddings API. Система использует fallback.
 
-#### Slow responses
+#### Медленные ответы
 
-**Solution:**
+**Решение:**
 
-- Use cache (check with `stats` command)
-- Reduce `top_k` in search
-- Decrease `max_tokens` in generation
+- Используйте кеш (проверить через команду `stats`)
+- Уменьшите `top_k` в поиске
+- Уменьшите `max_tokens` при генерации
 
-### Getting Help
+### Куда обратиться
 
-- 📖 Check documentation files
-- 🐛 Open an issue on GitHub
-- 💬 Ask in discussions
+- 📖 Проверьте файлы документации
+- 🐛 Откройте issue на GitHub
+- 💬 Задайте вопрос в Discussions
 
 ---
 
-## 🤝 Contributing
+## 🤝 Вклад в проект
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Контрибьюции приветствуются! Подробности — в [CONTRIBUTING.md](CONTRIBUTING.md).
 
-### Quick Start for Contributors
+### Быстрый старт для контрибьюторов
 
 ```bash
-# Fork and clone
-git clone https://github.com/yourusername/rag-assistant.git
+# Форк и клонирование
+git clone https://github.com/Edwards359/rag-assistant.git
 
-# Create feature branch
+# Создать feature-ветку
 git checkout -b feature/amazing-feature
 
-# Make changes and test
+# Внести изменения и протестировать
 
-# Commit and push
+# Коммит и push
 git commit -m 'Add amazing feature'
 git push origin feature/amazing-feature
 
-# Open Pull Request
+# Открыть Pull Request
 ```
 
 ---
 
-## 📄 License
+## 📄 Лицензия
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-### Technologies
-
-- **[OpenAI](https://openai.com/)** - GPT-4 and embeddings API
-- **[GigaChat](https://developers.sber.ru/gigachat)** - Russian language model
-- **[ChromaDB](https://www.trychroma.com/)** - Vector database
-- **[LangChain](https://python.langchain.com/)** - LLM framework
-- **[RAGAS](https://docs.ragas.io/)** - RAG evaluation framework
-
-### Inspiration
-
-This project was built to demonstrate best practices in RAG implementation with different LLM backends.
+Проект распространяется по лицензии MIT. Детали — в файле [LICENSE](LICENSE).
 
 ---
 
-## 📊 Project Status
+## 🙏 Благодарности
 
-| Component | OpenAI | GigaChat |
+### Технологии
+
+- **[OpenAI](https://openai.com/)** — GPT-4 и API эмбеддингов
+- **[GigaChat](https://developers.sber.ru/gigachat)** — русскоязычная LLM
+- **[ChromaDB](https://www.trychroma.com/)** — векторная база
+- **[LangChain](https://python.langchain.com/)** — фреймворк для LLM
+- **[RAGAS](https://docs.ragas.io/)** — фреймворк оценки RAG
+
+### Вдохновение
+
+Проект создан для демонстрации лучших практик реализации RAG с разными LLM-бэкендами.
+
+---
+
+## 📊 Статус проекта
+
+| Компонент | OpenAI | GigaChat |
 | --------- | ------ | -------- |
 | LLM API | ✅ | ✅ |
-| Embeddings | ✅ | ⚠️ Fallback |
-| Vector Search | ✅ | ✅ |
-| Caching | ✅ | ✅ |
-| Quality Metrics | ✅ | ❌ |
-| Documentation | ✅ | ✅ |
+| Эмбеддинги | ✅ | ⚠️ Fallback |
+| Векторный поиск | ✅ | ✅ |
+| Кеш | ✅ | ✅ |
+| Метрики качества | ✅ | ❌ |
+| Документация | ✅ | ✅ |
 
-**Legend:** ✅ Fully Functional | ⚠️ Limited | ❌ Not Available
+**Легенда:** ✅ работает полностью | ⚠️ с ограничениями | ❌ недоступно
 
 ---
 
 ## 🔮 Roadmap
 
-- [ ] Add web interface (Streamlit/Gradio)
-- [ ] Support for multiple document formats (PDF, DOCX)
-- [ ] Conversation history
-- [ ] Multi-language support
-- [ ] Docker deployment
-- [ ] REST API endpoint
-- [ ] More embedding models
-- [ ] Production deployment guide
+- [ ] Веб-интерфейс (Streamlit/Gradio)
+- [ ] Поддержка разных форматов документов (PDF, DOCX)
+- [ ] История диалога
+- [ ] Многоязычная поддержка
+- [ ] Развёртывание в Docker
+- [ ] REST API эндпоинт
+- [ ] Больше моделей эмбеддингов
+- [ ] Гайд по production-развёртыванию
 
 ---
 
-## 📞 Contact
+## 📞 Контакты
 
-Project Link: [https://github.com/yourusername/rag-assistant](https://github.com/yourusername/rag-assistant)
+Ссылка на проект: [https://github.com/Edwards359/rag-assistant](https://github.com/Edwards359/rag-assistant)
 
 ---
 
 <div align="center">
 
-**Made with ❤️ and Python**
+**Сделано с ❤️ на Python**
 
-⭐ Star this repo if you find it useful!
+⭐ Поставьте звезду, если проект оказался полезен!
 
 </div>
